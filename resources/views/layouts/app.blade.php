@@ -4,12 +4,16 @@
         <title>Cadastro</title>
         <style type="text/css">
             body {
-                padding: 5%;
+                padding: 2%;
+            }
+            .navbar {
+                margin: 1%;
             }
         </style>
     </head>
     <body>
         <div class="container">
+            <x-navbar/>
             <main role="main">
                 @hasSection('body')
                     @yield('body')
