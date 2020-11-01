@@ -6,14 +6,16 @@ use Illuminate\View\Component;
 
 class Navbar extends Component
 {
+    public $current;
+
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($current)
     {
-        //
+        $this->current = $current;
     }
 
     /**

@@ -6,14 +6,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbar">
         <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            <li class="nav-item @if($current == 'inicio') active @endif ">
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Produtos <span class="sr-only">(current)</span></a>
+            <li class="nav-item @if($current == 'produtos') active @endif ">
+                <a class="nav-link" href="/produtos">Produtos <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Categorias <span class="sr-only">(current)</span></a>
+            <li class="nav-item @if($current == 'categorias') active @endif ">
+                <a class="nav-link" href="/categorias">Categorias <span class="sr-only">(current)</span></a>
             </li>
         </ul>
     </div>

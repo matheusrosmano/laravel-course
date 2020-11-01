@@ -13,7 +13,7 @@
     </head>
     <body>
         <div class="container">
-            <x-navbar/>
+            <x-navbar current="{{$current}}" />
             <main role="main">
                 @hasSection('body')
                     @yield('body')
