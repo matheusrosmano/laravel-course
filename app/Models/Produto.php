@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Produto extends Model
 {
     use HasFactory;
+
+    public function parent()
+    {
+        return $this->hasOne( 'App\Models\Categoria', 'id', 'categoria_id' );
+    }
 }

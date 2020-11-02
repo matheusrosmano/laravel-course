@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Produto;
+use App\Models\Categoria;
 
 class ProdutoController extends Controller
 {
@@ -13,7 +15,9 @@ class ProdutoController extends Controller
      */
     public function index()
     {
-        return view('produtos');
+        $produtos = Produto::all();
+
+        return view('produtos', compact('produtos'));
     }
 
     /**
@@ -23,7 +27,9 @@ class ProdutoController extends Controller
      */
     public function create()
     {
-        //
+        $categorias = Categoria::all()->sortBy('nome');
+
+        return view('novo-produto', compact('categorias'));
     }
 
     /**
@@ -34,7 +40,14 @@ class ProdutoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $produto = new Produto();
+        $produto->nome = $request->input('nome');
+        $produto->categoria_id = $request->input('categoria');
+        $produto->estoque = $request->input('estoque');
+        $produto->preco = $request->input('preco');
+
+        $produto->save();
+        return redirect('produtos');
     }
 
     /**
@@ -56,7 +69,14 @@ class ProdutoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $produto = Produto::find($id);
+        $categorias = Categoria::all();
+
+        if (empty($produto)) {
+            return redirect('/produtos');
+        }
+
+        return view('editar-produto', compact('produto', 'categorias'));
     }
 
     /**
@@ -68,7 +88,19 @@ class ProdutoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $produto = Produto::find($id);
+
+        if (empty($produto)) {
+            return redirect('/produtos');
+        }
+
+        $produto->nome = $request->input('nome');
+        $produto->categoria_id = $request->input('categoria');
+        $produto->estoque = $request->input('estoque');
+        $produto->preco = $request->input('preco');
+
+        $produto->save();
+        return redirect('/produtos');
     }
 
     /**
@@ -79,6 +111,11 @@ class ProdutoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $produto = Produto::find($id);
+        if (empty($produto)) {
+            return redirect('/produtos');
+        }
+        $produto->delete();
+        return redirect('/produtos');
     }
 }

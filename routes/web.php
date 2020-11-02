@@ -19,6 +19,11 @@ Route::get('/', function () {
     return view('index');
 });
 Route::get('/produtos', [ProdutoController::class, 'index']);
+Route::get('/produtos/novo', [ProdutoController::class, 'create']);
+Route::post('/produtos', [ProdutoController::class, 'store']);
+Route::get('/produtos/editar/{id}', [ProdutoController::class, 'edit']);
+Route::post('/produtos/editar/{id}', [ProdutoController::class, 'update']);
+Route::get('/produtos/deletar/{id}', [ProdutoController::class, 'destroy']);
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/categorias/novo', [CategoriaController::class, 'create']);
 Route::post('/categorias', [CategoriaController::class, 'store']);
