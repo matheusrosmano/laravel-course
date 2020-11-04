@@ -40,6 +40,20 @@ class ProdutoController extends Controller
      */
     public function store(Request $request)
     {
+        $regras = [
+            'nome'              => 'required|min:5',
+            'categoria'         => 'required',
+            'estoque'           => 'required|int',
+            'preco'             => 'required|float',
+        ];
+
+        $mensagens = [
+            'required'         => 'O :attribute é obrigatório.',
+            'nome.min'              => 'O valor ":input" não parece ter no minímo :min caracteres.',
+        ];
+
+        $request->validate($regras, $mensagens);
+
         $produto = new Produto();
         $produto->nome = $request->input('nome');
         $produto->categoria_id = $request->input('categoria');
