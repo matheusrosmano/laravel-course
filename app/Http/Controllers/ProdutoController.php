@@ -13,11 +13,17 @@ class ProdutoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function indexView()
     {
         $produtos = Produto::all();
 
         return view('produtos', compact('produtos'));
+    }
+
+    public function index()
+    {
+        $produtos = Produto::all();
+        return $produtos->toJson();
     }
 
     /**
@@ -40,28 +46,14 @@ class ProdutoController extends Controller
      */
     public function store(Request $request)
     {
-        $regras = [
-            'nome'              => 'required|min:5',
-            'categoria'         => 'required',
-            'estoque'           => 'required|int',
-            'preco'             => 'required|float',
-        ];
-
-        $mensagens = [
-            'required'         => 'O :attribute é obrigatório.',
-            'nome.min'              => 'O valor ":input" não parece ter no minímo :min caracteres.',
-        ];
-
-        $request->validate($regras, $mensagens);
-
         $produto = new Produto();
         $produto->nome = $request->input('nome');
-        $produto->categoria_id = $request->input('categoria');
+        $produto->categoria_id = $request->input('categoria_id');
         $produto->estoque = $request->input('estoque');
         $produto->preco = $request->input('preco');
 
         $produto->save();
-        return redirect('produtos');
+        return $produto->toJson();
     }
 
     /**
@@ -72,7 +64,12 @@ class ProdutoController extends Controller
      */
     public function show($id)
     {
-        //
+        $produto = Produto::find($id);
+
+      if (empty($produto)) {
+          return response('Produto não encontrado.', 404);
+      }
+      return $produto->toJson();
     }
 
     /**
@@ -105,16 +102,16 @@ class ProdutoController extends Controller
         $produto = Produto::find($id);
 
         if (empty($produto)) {
-            return redirect('/produtos');
+            return response('Produto não encontrado.', 404);
         }
 
         $produto->nome = $request->input('nome');
-        $produto->categoria_id = $request->input('categoria');
+        $produto->categoria_id = $request->input('categoria_id');
         $produto->estoque = $request->input('estoque');
         $produto->preco = $request->input('preco');
 
         $produto->save();
-        return redirect('/produtos');
+        return $produto->toJson();
     }
 
     /**
@@ -127,9 +124,9 @@ class ProdutoController extends Controller
     {
         $produto = Produto::find($id);
         if (empty($produto)) {
-            return redirect('/produtos');
+            return response("Produto não encontrado.", 404);
         }
         $produto->delete();
-        return redirect('/produtos');
+        return response('Ok', 200);
     }
 }

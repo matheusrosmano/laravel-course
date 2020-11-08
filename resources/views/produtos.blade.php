@@ -8,7 +8,7 @@
             <label class="card-text">
                 <button class="btn btn-primary btn-sm" role="button" onclick="javascript:novoProduto();">Novo produto</button>
             </label>
-            <table class="table table-hover table-bordered">
+            <table class="table table-hover table-bordered" id="tblProduto">
                 <thead>
                     <tr>
                         <th>Código</th>
@@ -31,7 +31,7 @@
                             <h5 class="modal-title">Novo Produto</h5>
                         </div>
                         <div class="modal-body">
-                            <input type="hidden" name="id">
+                            <input type="hidden" name="id" id="id">
                             <div class="form-group">
                                 <label for="nome" class="custom-control-label">Nome</label>
                                 <div class="input-group">
@@ -60,7 +60,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Salvar</button>
-                            <button type="submit" class="btn btn-secondary" data-dissmiss="modal" >Cancelar</button>
+                            <button type="submit" class="btn btn-secondary" data-dismiss="modal" >Cancelar</button>
                         </div>
                     </form>
                 </div>
@@ -71,12 +71,18 @@
 
 @section('javascript')
     <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': "{{csrf_token()}}"
+            }
+        });
+
         function novoProduto() {
             $('#formProduto input[type=text], #formProduto input[type=number]').each(function () {
                $(this).val('');
             });
-            carregaCategorias();
 
+            $('h5.modal-title').text('Cadastrar produto');
             $('#dlgProdutos').modal('show');
         }
 
@@ -88,5 +94,125 @@
                 }
             });
         }
+
+        function editar(id) {
+            $.getJSON('/api/produtos/' + id, function (data) {
+                $('#id').val(data.id);
+                $('#nome').val(data.nome);
+                $('#estoque').val(data.estoque);
+                $('#preco').val(data.preco);
+                $('#categoria').val(data.categoria_id);
+
+                $('h5.modal-title').text('Editar produto');
+                $('#dlgProdutos').modal('show');
+            });
+        }
+
+        function montarLinha(produto) {
+            var linha = '<tr>';
+            linha += '<td>' + produto.id + '</td>';
+            linha += '<td>' + produto.nome + '</td>';
+            linha += '<td>' + produto.estoque + '</td>';
+            linha += '<td>' + produto.preco + '</td>';
+            linha += '<td>' + produto.categoria_id + '</td>';
+            linha += '<td>';
+            linha += '<button class="btn btn-sm btn-primary"onclick="editar('  + produto.id + ')">Editar</button>';
+            linha += '<button class="btn btn-sm btn-danger" onclick="deletar(' + produto.id + ')">Apagar</button>';
+            linha += '</td>';
+            linha += '</tr>';
+
+            return linha;
+        }
+
+        function carregaProdutos() {
+            $.getJSON('/api/produtos', function (produtos) {
+                for (i = 0; i < produtos.length; i++) {
+                    var linha = montarLinha(produtos[i]);
+                    $('#tblProduto > tbody').append(linha);
+                }
+            });
+        }
+
+        function criarProduto() {
+            var produto = {
+                nome: $('#nome').val(),
+                estoque: $('#estoque').val(),
+                preco: $('#preco').val(),
+                categoria_id: $('#categoria').val()
+            };
+            console.log(produto);
+            $.post('/api/produtos', produto, function (data) {
+                var dadosJson = JSON.parse(data);
+                var linha = montarLinha(dadosJson);
+                $('#tblProduto > tbody').append(linha);
+            });
+        }
+
+        function deletar(id) {
+            $.ajax({
+                type: "DELETE",
+                url: '/api/produtos/' + id,
+                context: this,
+                success: function () {
+                    console.log('Apagou ok');
+                    var linhas = $('#tblProduto > tbody > tr');
+                    var e = linhas.filter(function (index, elemento) {
+                        return elemento.cells[0].textContent == id;
+                    });
+                    e.remove();
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        function salvarProduto() {
+            var produto = {
+                id: $('#id').val(),
+                nome: $('#nome').val(),
+                estoque: $('#estoque').val(),
+                preco: $('#preco').val(),
+                categoria_id: $('#categoria').val()
+            };
+
+            $.ajax({
+                type: "PUT",
+                url: '/api/produtos/' + produto.id,
+                data: produto,
+                context: this,
+                success: function (data) {
+                    prod = JSON.parse(data);
+
+                    var linhas = $('#tblProduto > tbody > tr');
+                    var e = linhas.filter(function (index, elemento) {
+                        return elemento.cells[0].textContent == produto.id;
+                    });
+                    e[0].cells[0].textContent = prod.id;
+                    e[0].cells[1].textContent = prod.nome;
+                    e[0].cells[2].textContent = prod.estoque;
+                    e[0].cells[3].textContent = prod.preco;
+                    e[0].cells[4].textContent = prod.categoria_id;
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            })
+        }
+
+        $(function() {
+            carregaCategorias();
+            carregaProdutos();
+            $('#formProduto').submit(function (event) {
+                event.preventDefault();
+                if ($('#id').val() == '') {
+                    criarProduto();
+                }
+                else {
+                    salvarProduto();
+                }
+                $('#dlgProdutos').modal('hide');
+            });
+        });
     </script>
 @endsection

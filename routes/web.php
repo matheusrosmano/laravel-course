@@ -18,7 +18,7 @@ use App\Http\Controllers\CategoriaController;
 Route::get('/', function () {
     return view('index');
 });
-Route::get('/produtos', [ProdutoController::class, 'index']);
+Route::get('/produtos', [ProdutoController::class, 'indexView']);
 Route::get('/produtos/novo', [ProdutoController::class, 'create']);
 Route::post('/produtos', [ProdutoController::class, 'store']);
 Route::get('/produtos/editar/{id}', [ProdutoController::class, 'edit']);
