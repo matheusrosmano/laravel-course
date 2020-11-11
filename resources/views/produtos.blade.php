@@ -47,7 +47,7 @@
                             <div class="form-group">
                                 <label for="preco" class="custom-control-label">Preço</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" id="preco" >
+                                    <input type="numeric" class="form-control" id="preco" >
                                 </div>
                             </div>
                             <div class="form-group">
@@ -114,7 +114,7 @@
             linha += '<td>' + produto.nome + '</td>';
             linha += '<td>' + produto.estoque + '</td>';
             linha += '<td>' + produto.preco + '</td>';
-            linha += '<td>' + produto.categoria_id + '</td>';
+            linha += '<td>' + produto.categoria.nome + '</td>';
             linha += '<td>';
             linha += '<button class="btn btn-sm btn-primary"onclick="editar('  + produto.id + ')">Editar</button>';
             linha += '<button class="btn btn-sm btn-danger" onclick="deletar(' + produto.id + ')">Apagar</button>';

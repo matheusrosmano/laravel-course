@@ -9,7 +9,7 @@ class Produto extends Model
 {
     use HasFactory;
 
-    public function parent()
+    public function categoria()
     {
         return $this->hasOne( 'App\Models\Categoria', 'id', 'categoria_id' );
     }
